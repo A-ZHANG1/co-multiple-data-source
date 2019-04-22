@@ -1,7 +1,7 @@
 package trade.spring.data.neo4j.repositories;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
-import trade.spring.data.neo4j.domain.Contract;
+import trade.spring.data.neo4j.domain.node.contract.Contract;
 
 /**
  * Created by huangtao on 2019-04-22.

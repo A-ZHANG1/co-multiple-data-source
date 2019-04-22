@@ -1,4 +1,4 @@
-package trade.spring.data.neo4j.domain;
+package trade.spring.data.neo4j.domain.node;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -15,7 +15,7 @@ public class Company {
     @Id
     @GeneratedValue
     private Long id;
-    private int companyId;
+    private Long companyId;
     private String companyName;
     private double capital;
     private double nodeWeight;
@@ -25,7 +25,7 @@ public class Company {
     public Company() {
     }
 
-    public Company(Long id, int companyId, String companyName, double capital, double nodeWeight, int core, int type) {
+    public Company(Long id, Long companyId, String companyName, double capital, double nodeWeight, int core, int type) {
         this.id = id;
         this.companyId = companyId;
         this.companyName = companyName;
