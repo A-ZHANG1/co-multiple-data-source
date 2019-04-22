@@ -27,4 +27,8 @@ public class CompanyService {
         return result;
     }
 
+    public Company addCompany(Company company){
+        return companyRepository.save(company);
+    }
+
 }
