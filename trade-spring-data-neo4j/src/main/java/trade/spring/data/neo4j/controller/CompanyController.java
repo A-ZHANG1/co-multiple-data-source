@@ -1,7 +1,10 @@
 package trade.spring.data.neo4j.controller;
 
 import java.util.List;
-import trade.spring.data.neo4j.domain.Company;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.services.CompanyService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,17 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
+    @Autowired
+    private CompanyService companyService;
 
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-
-    @GetMapping("/company")
+    @GetMapping("/all")
     public List<Company> findAllCompanies() {
         return companyService.findAllCompanies();
+    }
+
+    @PostMapping("/addOneCompany")
+    public Company addOneCompany(Company company){
+        return companyService.addCompany(company);
     }
 }

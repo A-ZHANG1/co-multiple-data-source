@@ -2,7 +2,7 @@ package trade.spring.data.neo4j.repositories;
 
 import java.util.List;
 
-import trade.spring.data.neo4j.domain.Company;
+import trade.spring.data.neo4j.domain.node.Company;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
