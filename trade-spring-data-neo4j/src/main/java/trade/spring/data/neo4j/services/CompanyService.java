@@ -35,4 +35,34 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
+    public Set<Company> getSubGraph(String companyName, int k){
+        Set<Company> visited = new HashSet<>();
+        List<Company> bfsQueue = new ArrayList<>();
+
+        Company startPoint = companyRepository.findByCompanyName(companyName);
+        bfsQueue.add(startPoint);
+        visited.add(startPoint);
+
+        while(k-- > 0){
+            List<Company> tmpQueue = new ArrayList<Company>();
+            for(Company company : bfsQueue){
+                Set<Company> set = findNeighborCompany(company);
+                for(Company c : set){
+                    if(!visited.contains(c)){
+                        visited.add(c);
+                        tmpQueue.add(c);
+                    }
+                }
+            }
+            bfsQueue = tmpQueue;
+        }
+        return visited;
+    }
+
+    public Set<Company> findNeighborCompany(Company company){
+        Set<Company> results = new HashSet<>();
+        results.addAll(companyRepository.findNeighborByCompanyName(company.getCompanyName()));
+        return results;
+    }
+
 }

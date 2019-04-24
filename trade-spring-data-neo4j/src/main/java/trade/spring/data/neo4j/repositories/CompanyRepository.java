@@ -20,4 +20,7 @@ public interface CompanyRepository extends Neo4jRepository<Company, Long> {
     @Query("MATCH (c:Company) WHERE c.companyName={companyName} RETURN c")
     Company findByCompanyName(@Param("companyName") String companyName);
 
+    @Query("MATCH (a:Company{companyName:{companyName}}) - [:PARTICIPATE_CONTRACT] -> (b:Contract) <- [:PARTICIPATE_CONTRACT] - (c:Company) RETURN c")
+    List<Company> findNeighborByCompanyName(@Param("companyName") String companyName);
+
 }
