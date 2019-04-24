@@ -48,4 +48,15 @@ public class Contract {
         contractType = apiContract.getContractType();
     }
 
+    public static Contract buildFromMysql(trade.spring.data.neo4j.mysql.model.Contract origin){
+        Contract contract = new Contract();
+        contract.setContractId(String.valueOf(origin.getContractId()));
+        contract.setStartTime(origin.getStartTime());
+        contract.setEndTime(origin.getEndTime());
+        contract.setLocation(origin.getLocation());
+        contract.setAmount(origin.getAmount());
+        contract.setContractName("贸易合同");
+        return contract;
+    }
+
 }

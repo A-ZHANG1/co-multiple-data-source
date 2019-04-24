@@ -1,12 +1,11 @@
 package trade.spring.data.neo4j.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import trade.spring.data.neo4j.apiModel.GeneralResponse;
 import trade.spring.data.neo4j.apiModel.contract.ApiContract;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
+import trade.spring.data.neo4j.mysql.mapper.ContractMapper;
 import trade.spring.data.neo4j.services.ContractService;
 
 /**
@@ -20,9 +19,22 @@ public class ContractController {
     @Autowired
     private ContractService contractService;
 
+    @Autowired
+    private ContractMapper mysqlContractMapper;
+
     @PostMapping("/create")
     public Contract create(@RequestBody ApiContract contract){
         return contractService.addOne(contract);
+    }
+
+    @GetMapping("/importFromMysql")
+    public GeneralResponse importContractFromMysql(){
+        GeneralResponse response = new GeneralResponse();
+        boolean result = contractService.importFromMysql();
+        if(!result) {
+            response.setStatus(2);
+        }
+        return response;
     }
 
 }

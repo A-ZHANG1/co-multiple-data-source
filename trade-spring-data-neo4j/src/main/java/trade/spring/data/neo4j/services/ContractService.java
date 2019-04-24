@@ -6,9 +6,12 @@ import trade.spring.data.neo4j.apiModel.contract.ApiContract;
 import trade.spring.data.neo4j.apiModel.contract.ContractCompany;
 import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
+import trade.spring.data.neo4j.domain.node.contract.Role;
 import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
+import trade.spring.data.neo4j.mysql.mapper.ContractMapper;
 import trade.spring.data.neo4j.repositories.ContractRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,21 +30,24 @@ public class ContractService {
     @Autowired
     private ParticipateContractService participateContractService;
 
+    @Autowired
+    private ContractMapper mysqlContractMapper;
+
     /**
      * 添加一个合同，以及相关的企业节点、边
      * TODO 应该是个原子操作
      *
-     * @param apiContract
+     * @param contract
      * @return
      */
-    public Contract addOne(ApiContract apiContract){
-        Contract endpoint = contractRepository.save(new Contract(apiContract));
+    public Contract addOne(Contract contract, List<ContractCompany> involvedCompanies){
+        Contract endpoint = contractRepository.save(contract);
         if(endpoint == null)
             // save failed
             return null;
 
         // 每一个参与公司，加一条边
-        for(ContractCompany contractCompany : apiContract.getInvolvedCompany()){
+        for(ContractCompany contractCompany : involvedCompanies){
             Company startpoint = find(contractCompany.getName());
             if(startpoint == null){
                 // 如果公司节点不存在，就新建一个
@@ -62,6 +68,10 @@ public class ContractService {
         return endpoint;
     }
 
+    public Contract addOne(ApiContract apiContract){
+        return addOne(new Contract(apiContract), apiContract.getInvolvedCompany());
+    }
+
     private Company find(String name){
         List<Company> companyList = companyService.findAllCompanies();
         for(Company company : companyList){
@@ -69,6 +79,21 @@ public class ContractService {
                 return company;
         }
         return null;
+    }
+
+    public boolean importFromMysql(){
+        List<trade.spring.data.neo4j.mysql.model.Contract> origins = mysqlContractMapper.getAllContracts();
+        for(trade.spring.data.neo4j.mysql.model.Contract origin : origins){
+            Contract contract = Contract.buildFromMysql(origin);
+
+            List<ContractCompany> companies = new ArrayList<>();
+            companies.add(new ContractCompany(null, origin.getPartyAName(), Role.PartyA));
+            companies.add(new ContractCompany(null, origin.getPartyBName(), Role.PartyB));
+
+            if(addOne(contract, companies) == null)
+                return false;
+        }
+        return true;
     }
 
 }
