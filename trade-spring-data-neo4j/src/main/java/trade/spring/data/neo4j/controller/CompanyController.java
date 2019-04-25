@@ -2,12 +2,16 @@ package trade.spring.data.neo4j.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.ogm.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import trade.spring.data.neo4j.apiModel.GeneralResponse;
+import trade.spring.data.neo4j.apiModel.graph.SubGraph;
 import trade.spring.data.neo4j.domain.node.Company;
+import trade.spring.data.neo4j.repositories.CompanyRepository;
 import trade.spring.data.neo4j.services.CompanyService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,35 +28,58 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private CompanyRepository companyRepository;
+
     @GetMapping("/all")
-    public List<Company> findAllCompanies() {
-        return companyService.findAllCompanies();
+    public GeneralResponse findAllCompanies() {
+        GeneralResponse<List<Company>> resp = new GeneralResponse<>();
+        resp.setObj(companyService.findAllCompanies());
+        return resp;
     }
 
     @PostMapping("/addOneCompany")
-    public Company addOneCompany(Company company){
-        return companyService.addCompany(company);
+    public GeneralResponse addOneCompany(Company company){
+        GeneralResponse<Company> resp = new GeneralResponse<>();
+        resp.setObj(companyService.addCompany(company));
+        return resp;
     }
 
-    @GetMapping("/neighbor")
-    public GeneralResponse<Set<Company>> getCompanyNeighbor(String companyName, int depth){
-        GeneralResponse<Set<Company>> resp = new GeneralResponse<>();
-        resp.setObj(companyService.getSubGraph(companyName, depth));
+//    @GetMapping("/neighbor")
+//    public GeneralResponse<Set<Company>> getCompanyNeighbor(Long id, int depth){
+//        GeneralResponse<Set<Company>> resp = new GeneralResponse<>();
+//        resp.setObj(companyService.getSubGraph(id, depth));
+//        if(resp.getObj() == null)
+//            resp.setStatus(2);
+//        return resp;
+//    }
+
+    @GetMapping("/subgraph")
+    public GeneralResponse<SubGraph> getSubGraph(Long id, int depth){
+        GeneralResponse<SubGraph> resp = new GeneralResponse<>();
+        resp.setObj(companyService.getSubGraph(id, depth));
+        if(resp.getObj() == null)
+            resp.setStatus(2);
         return resp;
     }
 
     @GetMapping("/test")
-    public GeneralResponse test(String companyName, int depth){
+    public GeneralResponse test(Long id){
         GeneralResponse resp = new GeneralResponse<>();
+        List list = companyRepository.test(1324L);
+        System.out.println(list.size());
+        resp.setObj(list);
+        return resp;
+    }
 
-        Set<Company> companies = companyService.getSubGraph(companyName, depth);
-        System.out.println(companies.size());
-
-        Set<String> strings = new HashSet<>();
-        for(Company company : companies){
-            strings.add(company.getCompanyName());
-        }
-        System.out.println(strings.size());
+    @GetMapping("/info")
+    public GeneralResponse getCompanyInfo(Long id) {
+        GeneralResponse<Company> resp = new GeneralResponse<>();
+        Company company = companyService.findById(id);
+        if (company != null)
+            resp.setObj(company);
+        else
+            resp.setStatus(2);
         return resp;
     }
 }
