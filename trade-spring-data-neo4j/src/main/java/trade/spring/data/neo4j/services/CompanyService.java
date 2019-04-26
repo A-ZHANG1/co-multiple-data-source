@@ -39,16 +39,11 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public SubGraph getSubGraph(Long id, int k){
+    private SubGraph getSubGraph(Company startPoint, int k){
         Set<Company> visited = new HashSet<>();
         Set<Link> links = new HashSet<>();
         List<Company> bfsQueue = new ArrayList<>();
 
-        Optional<Company> op = companyRepository.findById(id);
-        if(!op.isPresent())
-            return null;
-
-        Company startPoint = op.get();
         bfsQueue.add(startPoint);
         visited.add(startPoint);
 
@@ -71,6 +66,22 @@ public class CompanyService {
         graph.setNodes(visited);
         graph.setLinks(links);
         return graph;
+    }
+
+    public SubGraph getSubGraphById(Long id, int k){
+        Optional<Company> op = companyRepository.findById(id);
+        if(!op.isPresent())
+            return null;
+
+        return getSubGraph(op.get(), k);
+    }
+
+    public SubGraph getSubGraphByCompanyName(String companyName, int k){
+        Company startPoint = companyRepository.findByCompanyName(companyName);
+        if(startPoint == null)
+            return null;
+
+        return getSubGraph(startPoint, k);
     }
 
     public Set<Company> findNeighborCompanyByName(Company company){
