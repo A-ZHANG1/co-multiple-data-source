@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import trade.spring.data.neo4j.apiModel.graph.Link;
+import trade.spring.data.neo4j.apiModel.graph.Node;
 import trade.spring.data.neo4j.apiModel.graph.SubGraph;
 import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
@@ -40,22 +41,36 @@ public class CompanyService {
     }
 
     private SubGraph getSubGraph(Company startPoint, int k){
-        Set<Company> visited = new HashSet<>();
+        // 已访问过的公司名
+        Set<String> visited = new HashSet<>();
+        // 每次遍历的queue
+        List<Node> bfsQueue = new ArrayList<>();
+
+        // 结果集
+        Set<Node> nodes = new HashSet<>();
         Set<Link> links = new HashSet<>();
-        List<Company> bfsQueue = new ArrayList<>();
 
-        bfsQueue.add(startPoint);
-        visited.add(startPoint);
+        // 初始化起点node
+        Node startNode = Node.buildFromCompany(startPoint);
+        startNode.setDistance(0);
 
-        while(k-- > 0){
-            List<Company> tmpQueue = new ArrayList<Company>();
-            for(Company company : bfsQueue){
-                SubGraph subGraph = findNeighborGraphById(company.getId());
+
+        // 初始化遍历环境
+        bfsQueue.add(startNode);
+        nodes.add(startNode);
+        visited.add(startPoint.getCompanyName());
+
+        for (int i = 1; i <= k; i++) {
+            List<Node> tmpQueue = new ArrayList<>();
+            for (Node node : bfsQueue) {
+                SubGraph subGraph = findNeighborGraphById(node.getId());
                 links.addAll(subGraph.getLinks());
-                for(Company c : subGraph.getNodes()){
-                    if(!visited.contains(c)){
-                        visited.add(c);
-                        tmpQueue.add(c);
+                for (Node n : subGraph.getNodes()) {
+                    if (!visited.contains(n.getCompanyName())) {
+                        n.setDistance(i);
+                        visited.add(n.getCompanyName());
+                        tmpQueue.add(n);
+                        nodes.add(n);
                     }
                 }
             }
@@ -63,7 +78,7 @@ public class CompanyService {
         }
 
         SubGraph graph = new SubGraph();
-        graph.setNodes(visited);
+        graph.setNodes(nodes);
         graph.setLinks(links);
         return graph;
     }
@@ -103,7 +118,7 @@ public class CompanyService {
         SubGraph subGraph = new SubGraph();
         List<Map<String, Object>> map = companyRepository.findNeighborById(id);
         for(Map m : map){
-            subGraph.getNodes().add((Company) m.get("c"));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("c")));
             subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("b"), (ParticipateContract) m.get("r1"),
                     (ParticipateContract) m.get("r2")));
         }
