@@ -45,19 +45,19 @@ public class CompanyController {
         return resp;
     }
 
-//    @GetMapping("/neighbor")
-//    public GeneralResponse<Set<Company>> getCompanyNeighbor(Long id, int depth){
-//        GeneralResponse<Set<Company>> resp = new GeneralResponse<>();
-//        resp.setObj(companyService.getSubGraph(id, depth));
-//        if(resp.getObj() == null)
-//            resp.setStatus(2);
-//        return resp;
-//    }
-
-    @GetMapping("/subgraph")
+    @GetMapping("/subgraphById")
     public GeneralResponse<SubGraph> getSubGraph(Long id, int depth){
         GeneralResponse<SubGraph> resp = new GeneralResponse<>();
-        resp.setObj(companyService.getSubGraph(id, depth));
+        resp.setObj(companyService.getSubGraphById(id, depth));
+        if(resp.getObj() == null)
+            resp.setStatus(2);
+        return resp;
+    }
+
+    @GetMapping("/subgraphByName")
+    public GeneralResponse<SubGraph> getSubGraphByName(String companyName, int depth){
+        GeneralResponse<SubGraph> resp = new GeneralResponse<>();
+        resp.setObj(companyService.getSubGraphByCompanyName(companyName, depth));
         if(resp.getObj() == null)
             resp.setStatus(2);
         return resp;
