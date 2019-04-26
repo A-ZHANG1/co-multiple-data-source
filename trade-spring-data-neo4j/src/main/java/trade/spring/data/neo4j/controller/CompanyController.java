@@ -5,17 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.swagger.annotations.ApiOperation;
 import org.neo4j.ogm.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import trade.spring.data.neo4j.apiModel.GeneralResponse;
 import trade.spring.data.neo4j.apiModel.graph.SubGraph;
 import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.repositories.CompanyRepository;
 import trade.spring.data.neo4j.services.CompanyService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Wayne.A.Z on 2019/4/18.
@@ -32,6 +30,8 @@ public class CompanyController {
     private CompanyRepository companyRepository;
 
     @GetMapping("/all")
+    @ResponseBody
+    @ApiOperation("返回所有公司节点")
     public GeneralResponse findAllCompanies() {
         GeneralResponse<List<Company>> resp = new GeneralResponse<>();
         resp.setObj(companyService.findAllCompanies());
@@ -39,14 +39,19 @@ public class CompanyController {
     }
 
     @PostMapping("/addOneCompany")
+    @ResponseBody
+    @ApiOperation("新建公司节点")
     public GeneralResponse addOneCompany(Company company){
         GeneralResponse<Company> resp = new GeneralResponse<>();
         resp.setObj(companyService.addCompany(company));
         return resp;
     }
 
+
     @GetMapping("/subgraphById")
-    public GeneralResponse<SubGraph> getSubGraph(Long id, int depth){
+    @ResponseBody
+    @ApiOperation("返回n-hop子图")
+    public GeneralResponse<SubGraph> getSubGraph(@RequestParam Long id,@RequestParam int depth){
         GeneralResponse<SubGraph> resp = new GeneralResponse<>();
         resp.setObj(companyService.getSubGraphById(id, depth));
         if(resp.getObj() == null)
