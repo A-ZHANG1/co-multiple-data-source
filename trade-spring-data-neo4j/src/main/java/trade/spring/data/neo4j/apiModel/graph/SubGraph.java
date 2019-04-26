@@ -12,7 +12,7 @@ import java.util.Set;
 @lombok.Data
 public class SubGraph {
 
-    private Set<Company> nodes;
+    private Set<Node> nodes;
 
     private Set<Link> links;
 
