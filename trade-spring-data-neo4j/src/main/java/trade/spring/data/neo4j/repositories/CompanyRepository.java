@@ -34,4 +34,16 @@ public interface CompanyRepository extends Neo4jRepository<Company, Long> {
 
     @Query("MATCH (a:Company) - [r1:PARTICIPATE_CONTRACT] -> (b:Contract) <- [r2:PARTICIPATE_CONTRACT] - (c:Company) WHERE id(a)={id} RETURN r1,r2,b,c")
     List<Map> test(@Param("id") Long id);
+
+    @Query("MATCH (c:Company) WHERE c.companyName={companyName} SET c.type = {type} RETURN c")
+    Company setCompanyType(@Param("companyName") String companyName, @Param("type") int type);
+
+    @Query("MATCH(a:Company{type:1})-[:PARTICIPATE_CONTRACT]->(r1:Contract)<-[:PARTICIPATE_CONTRACT]-" +
+            "(b:Company{type:2})-[:PARTICIPATE_CONTRACT]->(r2:Contract)<-[:PARTICIPATE_CONTRACT]-" +
+            "(c:Company{type:3})-[:PARTICIPATE_CONTRACT]->(r3:Contract)<-[:PARTICIPATE_CONTRACT]-" +
+            "(d:Company{type:4})-[:PARTICIPATE_CONTRACT]->(r4:Contract)<-[:PARTICIPATE_CONTRACT]-" +
+            "(e:Company{type:5})" +
+            "RETURN a,b,c,d,e,r1,r2,r3,r4")
+    List<Map<String, Object>> getSupplyChain();
+
 }

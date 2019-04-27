@@ -86,4 +86,20 @@ public class CompanyController {
             resp.setStatus(2);
         return resp;
     }
+
+    @GetMapping("/setCompanyType")
+    public GeneralResponse setCompanyType(String companyName, int type){
+        Company c = companyRepository.setCompanyType(companyName, type);
+        GeneralResponse<Company> resp = new GeneralResponse<>();
+        resp.setObj(c);
+        return resp;
+    }
+
+    @GetMapping("/getSupplyChain")
+    public GeneralResponse getSupplyChain(){
+        List<Map<String,Object>> supplyChain = companyRepository.getSupplyChain();
+        GeneralResponse<List<Map<String,Object>>> resp = new GeneralResponse<>();
+        resp.setObj(supplyChain);
+        return resp;
+    }
 }

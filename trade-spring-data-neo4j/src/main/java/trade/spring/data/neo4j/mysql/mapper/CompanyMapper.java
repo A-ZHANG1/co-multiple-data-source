@@ -34,4 +34,5 @@ public interface CompanyMapper {
 
     @Update("update Company SET nodeWeight=#{nodeWeight} where companyId=#{companyId}")
     void updateCompanyNodeWeight(Company company);
+
 }
