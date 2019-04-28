@@ -99,6 +99,28 @@ public class CompanyService {
         return subGraph;
     }
 
+    public SubGraph getSupplyChain(){
+        SubGraph subGraph = new SubGraph();
+        List<Map<String, Object>> map = companyRepository.getSupplyChain();
+        for(Map m : map){
+            subGraph.getNodes().add((Company) m.get("a"));
+            subGraph.getNodes().add((Company) m.get("b"));
+            subGraph.getNodes().add((Company) m.get("c"));
+            subGraph.getNodes().add((Company) m.get("d"));
+            subGraph.getNodes().add((Company) m.get("e"));
+
+            subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("c1"), (ParticipateContract) m.get("r11"),
+                    (ParticipateContract) m.get("r12")));
+            subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("c2"), (ParticipateContract) m.get("r22"),
+                    (ParticipateContract) m.get("r23")));
+            subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("c3"), (ParticipateContract) m.get("r33"),
+                    (ParticipateContract) m.get("r34")));
+            subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("c4"), (ParticipateContract) m.get("r44"),
+                    (ParticipateContract) m.get("r45")));
+        }
+        return subGraph;
+    }
+
     public Company findById(Long id){
         return companyRepository.findById(id).get();
     }

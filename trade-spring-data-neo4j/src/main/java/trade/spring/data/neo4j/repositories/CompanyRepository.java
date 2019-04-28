@@ -38,12 +38,12 @@ public interface CompanyRepository extends Neo4jRepository<Company, Long> {
     @Query("MATCH (c:Company) WHERE c.companyName={companyName} SET c.type = {type} RETURN c")
     Company setCompanyType(@Param("companyName") String companyName, @Param("type") int type);
 
-    @Query("MATCH(a:Company{type:1})-[:PARTICIPATE_CONTRACT]->(r1:Contract)<-[:PARTICIPATE_CONTRACT]-" +
-            "(b:Company{type:2})-[:PARTICIPATE_CONTRACT]->(r2:Contract)<-[:PARTICIPATE_CONTRACT]-" +
-            "(c:Company{type:3})-[:PARTICIPATE_CONTRACT]->(r3:Contract)<-[:PARTICIPATE_CONTRACT]-" +
-            "(d:Company{type:4})-[:PARTICIPATE_CONTRACT]->(r4:Contract)<-[:PARTICIPATE_CONTRACT]-" +
+    @Query("MATCH(a:Company{type:1})-[r11:PARTICIPATE_CONTRACT]->(c1:Contract)<-[r12:PARTICIPATE_CONTRACT]-" +
+            "(b:Company{type:2})-[r22:PARTICIPATE_CONTRACT]->(c2:Contract)<-[r23:PARTICIPATE_CONTRACT]-" +
+            "(c:Company{type:3})-[r33:PARTICIPATE_CONTRACT]->(c3:Contract)<-[r34:PARTICIPATE_CONTRACT]-" +
+            "(d:Company{type:4})-[r44:PARTICIPATE_CONTRACT]->(c4:Contract)<-[r45:PARTICIPATE_CONTRACT]-" +
             "(e:Company{type:5})" +
-            "RETURN a,b,c,d,e,r1,r2,r3,r4")
+            "RETURN DISTINCT a,b,c,d,e,c1,c2,c3,c4,r11,r12,r22,r23,r33,r34,r44,r45")
     List<Map<String, Object>> getSupplyChain();
 
 }
