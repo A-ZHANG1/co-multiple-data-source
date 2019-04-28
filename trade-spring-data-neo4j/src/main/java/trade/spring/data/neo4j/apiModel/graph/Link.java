@@ -35,9 +35,23 @@ public class Link {
             link.partyBName = r2.getCompany().getCompanyName();
         }
 
-        // TODO
-        link.linkWeight = 0;
+        link.linkWeight = 1;
 
         return link;
+    }
+
+    public void weightIncrement() {
+        linkWeight++;
+    }
+
+    public void weightIncrement(double weight) {
+        linkWeight += weight;
+    }
+
+    public static void main(String[] args) {
+        Link link1 = new Link();
+        Link link2 = new Link();
+
+        System.out.println(link1.equals(link2));
     }
 }

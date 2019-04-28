@@ -1,6 +1,7 @@
 package trade.spring.data.neo4j.services;
 
 import java.util.*;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import trade.spring.data.neo4j.apiModel.graph.Link;
@@ -41,10 +42,12 @@ public class CompanyService {
     }
 
     private SubGraph getSubGraph(Company startPoint, int k){
-        // 已访问过的公司名
-        Set<String> visited = new HashSet<>();
+        // 已访问过的公司索引
+        Map<String, Node> nodeMap = new HashMap<>();
         // 每次遍历的queue
         List<Node> bfsQueue = new ArrayList<>();
+        // 用于快速检索已有的link
+        Map<String, Set<String>> linkMap = new HashMap<>();
 
         // 结果集
         Set<Node> nodes = new HashSet<>();
@@ -54,25 +57,49 @@ public class CompanyService {
         Node startNode = Node.buildFromCompany(startPoint);
         startNode.setDistance(0);
 
-
         // 初始化遍历环境
         bfsQueue.add(startNode);
         nodes.add(startNode);
-        visited.add(startPoint.getCompanyName());
+        nodeMap.put(startNode.getCompanyName(), startNode);
 
         for (int i = 1; i <= k; i++) {
             List<Node> tmpQueue = new ArrayList<>();
             for (Node node : bfsQueue) {
                 SubGraph subGraph = findNeighborGraphById(node.getId());
-                links.addAll(subGraph.getLinks());
+
                 for (Node n : subGraph.getNodes()) {
-                    if (!visited.contains(n.getCompanyName())) {
+                    if (!nodeMap.containsKey(n.getCompanyName())) {
                         n.setDistance(i);
-                        visited.add(n.getCompanyName());
+                        nodeMap.put(n.getCompanyName(), n);
                         tmpQueue.add(n);
                         nodes.add(n);
                     }
                 }
+
+                for(Link link : subGraph.getLinks()){
+                    if(linkMap.get(link.getPartyAName()) == null || !linkMap.get(link.getPartyAName()).contains(link.getPartyBName())){
+                        // not existed
+                        links.add(link);
+                        if(linkMap.get(link.getPartyAName()) == null){
+                            linkMap.put(link.getPartyAName(), new HashSet<>());
+                        }
+                        if(linkMap.get(link.getPartyBName()) == null){
+                            linkMap.put(link.getPartyBName(), new HashSet<>());
+                        }
+                        linkMap.get(link.getPartyAName()).add(link.getPartyBName());
+                        linkMap.get(link.getPartyBName()).add(link.getPartyAName());
+
+                        // 修改node权重，虽然下面两个if比较多余
+                        if(nodeMap.containsKey(link.getPartyAName())){
+                            nodeMap.get(link.getPartyAName()).increment(link.getLinkWeight());
+                        }
+                        if(nodeMap.containsKey(link.getPartyBName())){
+                            nodeMap.get(link.getPartyBName()).increment(link.getLinkWeight());
+                        }
+                    }
+                }
+
+
             }
             bfsQueue = tmpQueue;
         }
@@ -116,11 +143,28 @@ public class CompanyService {
 
     public SubGraph findNeighborGraphById(Long id){
         SubGraph subGraph = new SubGraph();
+        Map<String, Map<String, Link>> linkMap = new HashMap<>();
+
         List<Map<String, Object>> map = companyRepository.findNeighborById(id);
         for(Map m : map){
             subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("c")));
-            subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("b"), (ParticipateContract) m.get("r1"),
-                    (ParticipateContract) m.get("r2")));
+
+            // check link duplication
+            Link link = Link.buildFromContract((Contract) m.get("b"), (ParticipateContract) m.get("r1"), (ParticipateContract) m.get("r2"));
+            if(linkMap.get(link.getPartyAName()) != null && linkMap.get(link.getPartyAName()).get(link.getPartyBName()) != null){
+                // existed
+                linkMap.get(link.getPartyAName()).get(link.getPartyBName()).weightIncrement();
+            } else {
+                subGraph.getLinks().add(link);
+                if(linkMap.get(link.getPartyAName()) == null){
+                    linkMap.put(link.getPartyAName(), new HashMap<>());
+                }
+                if(linkMap.get(link.getPartyBName()) == null){
+                    linkMap.put(link.getPartyBName(), new HashMap<>());
+                }
+                linkMap.get(link.getPartyAName()).put(link.getPartyBName(), link);
+                linkMap.get(link.getPartyBName()).put(link.getPartyAName(), link);
+            }
         }
         return subGraph;
     }

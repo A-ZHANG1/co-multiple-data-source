@@ -15,7 +15,7 @@ public class Node {
 
     private String companyName;
 
-    private double capital;
+    private double capital = 0;
 
     private double nodeWeight;
 
@@ -31,11 +31,15 @@ public class Node {
         node.setId(company.getId());
         node.setCompanyId(company.getCompanyId());
         node.setCompanyName(company.getCompanyName());
-        node.setCapital(company.getCapital());
+        // node.setCapital(company.getCapital());
         node.setNodeWeight(company.getNodeWeight());
         node.setCore(company.getCore());
         node.setType(company.getType());
         return node;
+    }
+
+    public void increment(double k) {
+        capital += k;
     }
 
 }
