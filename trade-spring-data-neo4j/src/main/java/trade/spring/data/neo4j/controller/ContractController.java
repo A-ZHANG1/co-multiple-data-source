@@ -37,4 +37,13 @@ public class ContractController {
         return response;
     }
 
+    @GetMapping("/getByCompanyNames")
+    public GeneralResponse getContractsByCompanyNames(String companyNameA, String companyNameB) {
+        GeneralResponse response = new GeneralResponse();
+        response.setObj(contractService.getContractsByCompanyNames(companyNameA, companyNameB));
+        if(response.getObj() == null)
+            response.setStatus(2);
+        return response;
+    }
+
 }

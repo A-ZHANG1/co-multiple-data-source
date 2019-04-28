@@ -96,4 +96,8 @@ public class ContractService {
         return true;
     }
 
+    public List<Contract> getContractsByCompanyNames(String nameA, String nameB) {
+        return contractRepository.findContractsByCompanyNames(nameA, nameB);
+    }
+
 }
