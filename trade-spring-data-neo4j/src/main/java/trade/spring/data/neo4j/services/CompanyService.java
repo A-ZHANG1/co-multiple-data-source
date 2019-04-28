@@ -173,11 +173,11 @@ public class CompanyService {
         SubGraph subGraph = new SubGraph();
         List<Map<String, Object>> map = companyRepository.getSupplyChain();
         for(Map m : map){
-            subGraph.getNodes().add((Company) m.get("a"));
-            subGraph.getNodes().add((Company) m.get("b"));
-            subGraph.getNodes().add((Company) m.get("c"));
-            subGraph.getNodes().add((Company) m.get("d"));
-            subGraph.getNodes().add((Company) m.get("e"));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("a")));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("b")));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("c")));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("d")));
+            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("e")));
 
             subGraph.getLinks().add(Link.buildFromContract((Contract) m.get("c1"), (ParticipateContract) m.get("r11"),
                     (ParticipateContract) m.get("r12")));
