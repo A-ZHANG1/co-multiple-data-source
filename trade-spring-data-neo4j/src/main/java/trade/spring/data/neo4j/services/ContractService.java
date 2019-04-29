@@ -2,6 +2,7 @@ package trade.spring.data.neo4j.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import trade.spring.data.neo4j.apiModel.TradeRelationDetail;
 import trade.spring.data.neo4j.apiModel.contract.ApiContract;
 import trade.spring.data.neo4j.apiModel.contract.ContractCompany;
 import trade.spring.data.neo4j.domain.node.Company;
@@ -11,7 +12,11 @@ import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
 import trade.spring.data.neo4j.mysql.mapper.ContractMapper;
 import trade.spring.data.neo4j.repositories.ContractRepository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,6 +103,50 @@ public class ContractService {
 
     public List<Contract> getContractsByCompanyNames(String nameA, String nameB) {
         return contractRepository.findContractsByCompanyNames(nameA, nameB);
+    }
+
+    public TradeRelationDetail getRelationDetail(String nameA, String nameB, int monthNum) {
+        TradeRelationDetail tradeRelationDetail = new TradeRelationDetail();
+        tradeRelationDetail.setContracts(getContractsByCompanyNames(nameA, nameB));
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+
+        List<String> xList = new ArrayList<>(monthNum);
+        for (int i = 0; i < monthNum; i++) {
+            String str = year + "-" + (month < 10 ? ("0" + month) : month);
+            xList.add(0, str);
+            month--;
+            if (month == 0) {
+                year--;
+                month = 12;
+            }
+        }
+        tradeRelationDetail.setFrequencyX(xList);
+
+        List<Integer> valueList = new ArrayList<>();
+        for (int i = 0; i < monthNum; i++) {
+            valueList.add(0);
+        }
+        for(Contract contract : tradeRelationDetail.getContracts()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                calendar.setTime(sdf.parse(contract.getStartTime()));
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH) + 1;
+                String str = year + "-" + (month < 10 ? ("0" + month) : month);
+
+                if(xList.contains(str)) {
+                    valueList.set(xList.indexOf(str), valueList.get(xList.indexOf(str)) + 1);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        tradeRelationDetail.setFrequencyValue(valueList);
+
+        return tradeRelationDetail;
     }
 
 }
