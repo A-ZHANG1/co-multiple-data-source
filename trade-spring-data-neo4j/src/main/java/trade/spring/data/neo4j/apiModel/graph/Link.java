@@ -4,6 +4,8 @@ import trade.spring.data.neo4j.domain.node.contract.Contract;
 import trade.spring.data.neo4j.domain.node.contract.Role;
 import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
 
+import java.util.Objects;
+
 /**
  * Created by huangtao on 2019-04-25.
  */
@@ -53,5 +55,20 @@ public class Link {
         Link link2 = new Link();
 
         System.out.println(link1.equals(link2));
+    }
+
+    //SubGraph新加入边去重（set.add/addAll）需要重写equals方法
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Link link = (Link) o;
+        return Objects.equals(partyAName, link.partyAName) &&
+                Objects.equals(partyBName, link.partyBName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(partyAName, partyBName);
     }
 }
