@@ -27,18 +27,14 @@ public class Link {
 
         if(r1.getRole() == Role.PartyA){
             link.partyAName = r1.getCompany().getCompanyName();
+            link.partyBName = r2.getCompany().getCompanyName();
         } else if(r1.getRole() == Role.PartyB) {
             link.partyBName = r1.getCompany().getCompanyName();
-        }
-
-        if(r2.getRole() == Role.PartyA){
             link.partyAName = r2.getCompany().getCompanyName();
-        } else if(r2.getRole() == Role.PartyB) {
-            link.partyBName = r2.getCompany().getCompanyName();
         }
 
-        link.linkWeight = 1;
-
+        link.linkWeight = contract.getAmount();
+//        link.linkWeight = 1;
         return link;
     }
 

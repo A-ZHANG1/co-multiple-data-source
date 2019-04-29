@@ -98,9 +98,11 @@ public class CompanyController {
 
     @GetMapping("/getSupplyChain")
     public GeneralResponse getSupplyChain(){
-        SubGraph supplyChain = companyService.getSupplyChain();
+        SubGraph supplyChainType1 = companyService.getSupplyChainType1();
+        SubGraph supplyChainType2 = companyService.getSupplyChainType2();
+        supplyChainType1.appendGraph(supplyChainType2);
         GeneralResponse<SubGraph> resp = new GeneralResponse<>();
-        resp.setObj(supplyChain);
+        resp.setObj(supplyChainType1);
         return resp;
     }
 }

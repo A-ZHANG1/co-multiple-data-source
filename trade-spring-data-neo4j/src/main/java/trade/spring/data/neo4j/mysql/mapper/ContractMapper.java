@@ -25,7 +25,6 @@ public interface ContractMapper {
     @Select("select SUM(*) from Contract where partyAName=#{companyName} or partyBName=#{companyName}")
     int countContractsOfCompanyByCompanyName(@Param("companyName") String companyName);
 
-
     @Select("select * from Contract")
     List<Contract> getAllContracts();
 }
