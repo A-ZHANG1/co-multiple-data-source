@@ -23,23 +23,22 @@ public class SupplyChain {
 
     private Long subGraphId;
 
-//    private Set<Node> nodes;
-//
-//    private Set<Link> links;
+    private Set<Node> nodes;
 
-//    public SupplyChain(SubGraph subGraph){
-//        this.nodes = subGraph.getNodes();
-//        this.links = subGraph.getLinks();
-//    }
-//
-//    public SupplyChain(Long id, Long subGraphId, Set<Node> nodes, Set<Link> links) {
-//        this.id = id;
-//        this.subGraphId = subGraphId;
-//        this.nodes = nodes;
-//        this.links = links;
-//    }
+    private Set<Link> links;
+
+    public SupplyChain(SubGraph subGraph){
+        this.nodes = subGraph.getNodes();
+        this.links = subGraph.getLinks();
+    }
+
+    public SupplyChain(Long id, Long subGraphId, Set<Node> nodes, Set<Link> links) {
+        this.id = id;
+        this.subGraphId = subGraphId;
+        this.nodes = nodes;
+        this.links = links;
+    }
 
     public SupplyChain(){
-
     }
 }

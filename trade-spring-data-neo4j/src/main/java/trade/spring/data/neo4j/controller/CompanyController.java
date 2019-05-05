@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import trade.spring.data.neo4j.apiModel.GeneralResponse;
 import trade.spring.data.neo4j.apiModel.graph.SubGraph;
 import trade.spring.data.neo4j.domain.node.Company;
+import trade.spring.data.neo4j.domain.node.SupplyChain;
 import trade.spring.data.neo4j.repositories.CompanyRepository;
 import trade.spring.data.neo4j.services.CompanyService;
+import trade.spring.data.neo4j.services.SupplyChainService;
 
 /**
  * Created by Wayne.A.Z on 2019/4/18.
@@ -25,6 +27,9 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private SupplyChainService supplyChainService;
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -98,8 +103,8 @@ public class CompanyController {
 
     @GetMapping("/getSupplyChain")
     public GeneralResponse getSupplyChain(){
-        SubGraph supplyChainType1 = companyService.getSupplyChainType1();
-        SubGraph supplyChainType2 = companyService.getSupplyChainType2();
+        SubGraph supplyChainType1 = supplyChainService.getSupplyChainType1();
+        SubGraph supplyChainType2 = supplyChainService.getSupplyChainType2();
         supplyChainType1.appendGraph(supplyChainType2);
         GeneralResponse<SubGraph> resp = new GeneralResponse<>();
         resp.setObj(supplyChainType1);

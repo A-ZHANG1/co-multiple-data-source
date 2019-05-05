@@ -102,8 +102,6 @@ public class CompanyService {
                         }
                     }
                 }
-
-
             }
             bfsQueue = tmpQueue;
         }
@@ -170,69 +168,6 @@ public class CompanyService {
                 linkMap.get(link.getPartyBName()).put(link.getPartyAName(), link);
             }
         }
-        return subGraph;
-    }
-
-    /*
-    企业类型             e.g.                       e.g.
-    1：原材料制造     应用材料（中国)                应用材料（中国)
-    2: 半导体        安森美半导体（上海）有限公司     灿芯半导体(上海)有限公司
-    3：微电子制造     锐迪科微电子（上海）有限公司
-    4: 配件制造      剑腾液晶显示(上海)有限公司       必达泰克光电设备(上海)有限公司
-    5: 成品装配制造   爱博斯迪科化学(上海)有限公司     上海茂碧信息科技有限公司,上海薄荷信息科技有限公司
-    */
-
-    //type1: 1-2-3-4-5
-    public SubGraph getSupplyChainType1(){
-        SubGraph subGraph = new SubGraph();
-        List<Map<String, Object>> map = companyRepository.getSupplyChainType1();
-        for(Map m : map){
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("a")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("b")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("c")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("d")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("e")));
-
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c1"), (ParticipateContract) m.get("r11"),
-                    (ParticipateContract) m.get("r12")));
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c2"), (ParticipateContract) m.get("r22"),
-                    (ParticipateContract) m.get("r23")));
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c3"), (ParticipateContract) m.get("r33"),
-                    (ParticipateContract) m.get("r34")));
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c4"), (ParticipateContract) m.get("r44"),
-                    (ParticipateContract) m.get("r45")));
-
-        }
-        SupplyChain supplyChain = new SupplyChain(subGraph);
-        System.out.println(supplyChain);
-        supplyChainRepository.insertSupplyChain(supplyChain);
-//        supplyChainRepository.save(subGraph);
-        return subGraph;
-    }
-
-    //type2: 1-2-4-5
-    public SubGraph getSupplyChainType2(){
-        SubGraph subGraph = new SubGraph();
-        List<Map<String, Object>> map = companyRepository.getSupplyChainType2();
-
-        for(Map m : map){
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("a")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("b")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("d")));
-            subGraph.getNodes().add(Node.buildFromCompany((Company) m.get("e")));
-
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c1"), (ParticipateContract) m.get("r11"),
-                    (ParticipateContract) m.get("r12")));
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c2"), (ParticipateContract) m.get("r21"),
-                    (ParticipateContract) m.get("r22")));
-            subGraph.addLink(Link.buildFromContract((Contract) m.get("c3"), (ParticipateContract) m.get("r31"),
-                    (ParticipateContract) m.get("r32")));
-        }
-//        System.out.println(subGraph);
-        SupplyChain supplyChain = new SupplyChain(subGraph);
-//        supplyChainRepository.insertSupplyChain(supplyChain);
-        supplyChainRepository.save(supplyChain);
-
         return subGraph;
     }
 
