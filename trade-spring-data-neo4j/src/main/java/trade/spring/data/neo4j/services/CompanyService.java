@@ -7,13 +7,12 @@ import trade.spring.data.neo4j.apiModel.graph.Link;
 import trade.spring.data.neo4j.apiModel.graph.Node;
 import trade.spring.data.neo4j.apiModel.graph.SubGraph;
 import trade.spring.data.neo4j.domain.node.Company;
-import trade.spring.data.neo4j.domain.node.SupplyChain;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
 import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
 import trade.spring.data.neo4j.repositories.CompanyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import trade.spring.data.neo4j.repositories.SupplyChainRepository;
+import trade.spring.data.neo4j.repositories.SupplyChainNodeRepository;
 
 
 /**
@@ -27,7 +26,7 @@ public class CompanyService {
     private CompanyRepository companyRepository;
 
     @Autowired
-    private SupplyChainRepository supplyChainRepository;
+    private SupplyChainNodeRepository supplyChainRepository;
 
     @Transactional(readOnly = true)
     public List<Company> findAllCompanies() {
