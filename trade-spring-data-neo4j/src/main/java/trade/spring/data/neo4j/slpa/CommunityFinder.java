@@ -122,6 +122,31 @@ public class CommunityFinder {
 			}
 		}
 
+		// remove covered community
+		for (int i = 1; i < results.size(); i++) {
+			Community curCommunity = results.get(i);
+			for (int j = 0; j < i; ) {
+				if (results.get(j).cover(curCommunity)) {
+					results.remove(i);
+					i--;
+					for (int memberId : curCommunity.getMembers().keySet()) {
+						Map<Integer, Double> map = results.get(j).getMembers();
+						map.put(memberId, map.get(memberId) + curCommunity.getMembers().get(memberId));
+					}
+					break;
+				} else if (curCommunity.cover(results.get(j))) {
+					Community removeCommunity = results.remove(j);
+					i--;
+					for (int memberId : removeCommunity.getMembers().keySet()) {
+						Map<Integer, Double> map = curCommunity.getMembers();
+						map.put(memberId, map.get(memberId) + removeCommunity.getMembers().get(memberId));
+					}
+				} else {
+					j++;
+				}
+			}
+		}
+
 		return results;
 	}
 }
