@@ -14,4 +14,12 @@ public class Community {
 
     private Map<Integer, Double> members = new HashMap<>();
 
+    public boolean cover(Community community) {
+        for (int memberId : community.members.keySet()) {
+            if (!members.containsKey(memberId))
+                return false;
+        }
+        return true;
+    }
+
 }
