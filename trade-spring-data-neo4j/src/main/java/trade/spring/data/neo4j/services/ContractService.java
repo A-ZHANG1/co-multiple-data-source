@@ -11,12 +11,13 @@ import trade.spring.data.neo4j.domain.node.contract.Role;
 import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
 import trade.spring.data.neo4j.mysql.mapper.ContractMapper;
 import trade.spring.data.neo4j.repositories.ContractRepository;
+import trade.spring.data.neo4j.supplychain.SupplyChainDiscovery;
+import trade.spring.data.neo4j.supplychain.slpa.CacheUnit;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,10 +37,14 @@ public class ContractService {
     private ParticipateContractService participateContractService;
 
     @Autowired
+    private SupplyChainService supplyChainService;
+
+    @Autowired
     private ContractMapper mysqlContractMapper;
 
     /**
      * 添加一个合同，以及相关的企业节点、边
+     * 图谱数据添加第一步，把原始数据转换为参数所示格式
      * TODO 应该是个原子操作
      *
      * @param contract
@@ -47,6 +52,7 @@ public class ContractService {
      */
     public Contract addOne(Contract contract, List<ContractCompany> involvedCompanies){
         Contract endpoint = contractRepository.save(contract);
+        List<Company> companies = new ArrayList<>();
         if(endpoint == null)
             // save failed
             return null;
@@ -69,7 +75,14 @@ public class ContractService {
             if(participateContract == null) {
                 return null;
             }
+
+            companies.add(startpoint);
         }
+
+        // 异步通知检查供应链结构更新
+        CacheUnit cacheUnit = new CacheUnit(endpoint, companies);
+        supplyChainService.addCacheUnit(cacheUnit);
+
         return endpoint;
     }
 
