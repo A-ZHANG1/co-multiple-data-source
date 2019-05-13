@@ -18,20 +18,20 @@ public class SupplyChainController {
     @Autowired
     SupplyChainService supplyChainService;
 
-    @GetMapping("/generateSupplyChainNodes")
-    public GeneralResponse generateSupplyChainNodes(double postProcessingThreshold){
-        GeneralResponse resp = new GeneralResponse<>();
-        resp.setObj(supplyChainService.calSupplyChains(postProcessingThreshold));
-        return resp;
-    }
-
-    @GetMapping("/deleteAllSupplyChainNodes")
-    public GeneralResponse deleteAllSupplyChainNodes() {
-        GeneralResponse resp = new GeneralResponse<>();
-        if (!supplyChainService.deleteAllSupplyChainNodes()) {
-            resp.setStatus(2);
-        }
-        return resp;
-    }
+//    @GetMapping("/generateSupplyChainNodes")
+//    public GeneralResponse generateSupplyChainNodes(){
+//        GeneralResponse resp = new GeneralResponse<>();
+//        resp.setObj(supplyChainService.calSupplyChains());
+//        return resp;
+//    }
+//
+//    @GetMapping("/deleteAllSupplyChainNodes")
+//    public GeneralResponse deleteAllSupplyChainNodes() {
+//        GeneralResponse resp = new GeneralResponse<>();
+//        if (!supplyChainService.deleteAllSupplyChainNodes()) {
+//            resp.setStatus(2);
+//        }
+//        return resp;
+//    }
 
 }

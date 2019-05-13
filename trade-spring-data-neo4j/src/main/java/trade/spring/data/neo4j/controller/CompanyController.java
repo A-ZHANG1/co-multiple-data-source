@@ -101,13 +101,13 @@ public class CompanyController {
         return resp;
     }
 
-    @GetMapping("/getSupplyChain")
-    public GeneralResponse getSupplyChain(){
-        SubGraph supplyChainType1 = supplyChainService.getSupplyChainType1();
-        SubGraph supplyChainType2 = supplyChainService.getSupplyChainType2();
-        supplyChainType1.appendGraph(supplyChainType2);
-        GeneralResponse<SubGraph> resp = new GeneralResponse<>();
-        resp.setObj(supplyChainType1);
-        return resp;
-    }
+//    @GetMapping("/getSupplyChain")
+//    public GeneralResponse getSupplyChain(){
+//        SubGraph supplyChainType1 = supplyChainService.getSupplyChainType1();
+//        SubGraph supplyChainType2 = supplyChainService.getSupplyChainType2();
+//        supplyChainType1.appendGraph(supplyChainType2);
+//        GeneralResponse<SubGraph> resp = new GeneralResponse<>();
+//        resp.setObj(supplyChainType1);
+//        return resp;
+//    }
 }

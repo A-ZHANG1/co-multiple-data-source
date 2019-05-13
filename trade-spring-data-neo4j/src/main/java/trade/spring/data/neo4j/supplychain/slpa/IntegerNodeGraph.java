@@ -1,4 +1,4 @@
-package trade.spring.data.neo4j.slpa;
+package trade.spring.data.neo4j.supplychain.slpa;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;

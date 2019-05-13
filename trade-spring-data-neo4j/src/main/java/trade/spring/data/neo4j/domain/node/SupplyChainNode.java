@@ -3,6 +3,7 @@ package trade.spring.data.neo4j.domain.node;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import trade.spring.data.neo4j.common.Utils;
 
 /**
  * SupplyChain.java 结构不太能理解，我重开一个
@@ -20,7 +21,7 @@ public class SupplyChainNode {
 
     private String name;
 
-    private String lastUpdateTime;
+    private String lastUpdateTime = Utils.getTimeStamp();
 
     private int memberCounting;
 

@@ -7,6 +7,7 @@ import trade.spring.data.neo4j.domain.node.Company;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
+import trade.spring.data.neo4j.domain.node.SupplyChainNode;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
 
 /**
@@ -52,5 +53,8 @@ public interface CompanyRepository extends Neo4jRepository<Company, Long> {
             "(e:Company{type:5})" +
             "RETURN DISTINCT a,b,d,e,c1,c2,c3,r11,r12,r21,r22,r31,r32")
     List<Map<String, Object>> getSupplyChainType2();
+
+    @Query("MATCH (s:SupplyChainNode) - [:SUPPLY_CHAIN_HAS_MEMBER] -> (c:Company) WHERE id(c)={companyId} RETURN s")
+    List<SupplyChainNode> findSupplyChainNodesByCompanyId(@Param("companyId") Long id);
 
 }

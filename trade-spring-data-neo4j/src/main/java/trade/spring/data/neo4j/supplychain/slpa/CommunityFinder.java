@@ -1,13 +1,8 @@
-package trade.spring.data.neo4j.slpa;
+package trade.spring.data.neo4j.supplychain.slpa;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import trade.spring.data.neo4j.apiModel.SupplyChainStructure;
-import trade.spring.data.neo4j.domain.node.SupplyChain;
-import trade.spring.data.neo4j.domain.node.SupplyChainNode;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -87,7 +82,7 @@ public class CommunityFinder {
 			}
 			List<Integer> removeLabels = new ArrayList<>();
 			for(int communityId : node.communityDistribution.keySet()) {
-				System.out.println("node "+ node.id +" community " + communityId + ": " + node.communityDistribution.get(communityId) / sum);
+				// System.out.println("node "+ node.id +" community " + communityId + ": " + node.communityDistribution.get(communityId) / sum);
 				double confidence = node.communityDistribution.get(communityId) / sum;
 				if(confidence < threshold) {
 					removeLabels.add(communityId);
