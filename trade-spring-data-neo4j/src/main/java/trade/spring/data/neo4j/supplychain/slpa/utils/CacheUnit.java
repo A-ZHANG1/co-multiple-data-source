@@ -1,4 +1,4 @@
-package trade.spring.data.neo4j.supplychain.slpa;
+package trade.spring.data.neo4j.supplychain.slpa.utils;
 
 import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.domain.node.contract.Contract;

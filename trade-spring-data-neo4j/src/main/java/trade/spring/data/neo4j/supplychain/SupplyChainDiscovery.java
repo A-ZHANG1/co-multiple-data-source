@@ -1,17 +1,16 @@
 package trade.spring.data.neo4j.supplychain;
 
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import trade.spring.data.neo4j.apiModel.SupplyChainStructure;
 import trade.spring.data.neo4j.common.Utils;
 import trade.spring.data.neo4j.domain.node.Company;
 import trade.spring.data.neo4j.domain.node.SupplyChainNode;
 import trade.spring.data.neo4j.domain.node.contract.Contract;
-import trade.spring.data.neo4j.domain.relationship.SupplyChainHasMember;
 import trade.spring.data.neo4j.services.SupplyChainService;
-import trade.spring.data.neo4j.supplychain.slpa.CacheUnit;
-import trade.spring.data.neo4j.supplychain.slpa.Community;
+import trade.spring.data.neo4j.supplychain.slpa.utils.CacheUnit;
+import trade.spring.data.neo4j.supplychain.slpa.utils.Community;
 import trade.spring.data.neo4j.supplychain.slpa.CommunityFinder;
+import trade.spring.data.neo4j.supplychain.slpa.utils.BasicOperation;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,6 +40,9 @@ public class SupplyChainDiscovery {
 
     private SupplyChainService supplyChainService;
 
+    public SupplyChainDiscovery() {
+    }
+
     public SupplyChainDiscovery(SupplyChainService supplyChainService) {
         this.supplyChainService  = supplyChainService;
     }
@@ -53,35 +55,8 @@ public class SupplyChainDiscovery {
         // clear history data
         deleteAllSupplyChainNodes();
 
-        SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
-
-        List<Contract> allContracts = (List<Contract>) supplyChainService.contractRepository.findAll();
-        for(Contract contract : allContracts) {
-            List<Map<String, Company>> list = supplyChainService.contractRepository.findContractParticipants(contract.getId());
-            Company a = list.get(0).get("a");
-            Company c = list.get(0).get("c");
-
-            int aId = Math.toIntExact(a.getId());
-            int cId = Math.toIntExact(c.getId());
-
-            graph.addVertex(aId);
-            graph.addVertex(cId);
-
-            // 边不需要重复，且需要赋权
-            if(graph.containsEdge(aId, cId)){
-                DefaultWeightedEdge edge = graph.getEdge(aId, cId);
-                graph.setEdgeWeight(edge, graph.getEdgeWeight(edge) + contract.getAmount());
-
-                edge = graph.getEdge(cId, aId);
-                graph.setEdgeWeight(edge, graph.getEdgeWeight(edge) + contract.getAmount());
-            } else {
-                graph.addEdge(aId, cId);
-                graph.setEdgeWeight(graph.getEdge(aId, cId), contract.getAmount());
-
-                graph.addEdge(cId, aId);
-                graph.setEdgeWeight(graph.getEdge(cId, aId), contract.getAmount());
-            }
-        }
+        BasicOperation basicOperation = new BasicOperation();
+        SimpleDirectedWeightedGraph graph = basicOperation.getGraphCompanyDim();
 
         CommunityFinder cf = new CommunityFinder();
         cf.initIntegerNodeGraph(graph);
@@ -91,31 +66,8 @@ public class SupplyChainDiscovery {
 
 
         // save
-        SupplyChainStructure supplyChainStructure = new SupplyChainStructure();
-        for(Community community : communities) {
-            SupplyChainNode supplyChainNode = new SupplyChainNode();
-            supplyChainNode.setName(String.valueOf(community.getId()));
-            supplyChainNode.setMemberCounting(community.getMembers().size());
-            supplyChainStructure.getSupplyChainNodes().add(supplyChainNode);
-
-            supplyChainService.supplyChainRepository.save(supplyChainNode);
-
-            for(int companyId : community.getMembers().keySet()){
-                Optional<Company> op = supplyChainService.companyRepository.findById(Long.valueOf(companyId));
-                if(!op.isPresent())
-                    continue;
-                Company company = op.get();
-
-                SupplyChainHasMember hasMemberRelation = new SupplyChainHasMember();
-                hasMemberRelation.setCompany(company);
-                hasMemberRelation.setSupplyChain(supplyChainNode);
-                hasMemberRelation.setConfidence(community.getMembers().get(companyId));
-                supplyChainStructure.getSupplyChainHasMembers().add(hasMemberRelation);
-
-                supplyChainService.supplyChainHasMemberRepository.save(hasMemberRelation);
-            }
-
-        }
+        SupplyChainStructure supplyChainStructure =
+                basicOperation.SaveSupplyChainStructureToRepository(communities);
 
         return supplyChainStructure;
     }
