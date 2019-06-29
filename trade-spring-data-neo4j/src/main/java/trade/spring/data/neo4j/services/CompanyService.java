@@ -34,6 +34,10 @@ public class CompanyService {
         return result;
     }
 
+    public double getCapitalById(Long companyId){
+        return companyRepository.getCapitalById(companyId);
+    }
+
     public Company addCompany(String companyName){
         Company company = new Company();
         company.setCompanyName(companyName);

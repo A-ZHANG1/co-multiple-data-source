@@ -24,6 +24,9 @@ public interface CompanyRepository extends Neo4jRepository<Company, Long> {
     @Query("MATCH (c:Company) WHERE c.companyName={companyName} RETURN c")
     Company findByCompanyName(@Param("companyName") String companyName);
 
+    @Query("MATCH (c:Company) WHERE c.companyId={companyId} RETURN c.capital")
+    double getCapitalById(@Param("companyId") Long companyId);
+
     //    @Query("MATCH (c:Company) WHERE c.id={id} RETURN c")
     //    Company findById(@Param("id") Long id);
 

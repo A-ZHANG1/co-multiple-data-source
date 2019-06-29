@@ -11,8 +11,7 @@ import trade.spring.data.neo4j.domain.node.contract.Role;
 import trade.spring.data.neo4j.domain.relationship.ParticipateContract;
 import trade.spring.data.neo4j.mysql.mapper.ContractMapper;
 import trade.spring.data.neo4j.repositories.ContractRepository;
-import trade.spring.data.neo4j.supplychain.SupplyChainDiscovery;
-import trade.spring.data.neo4j.supplychain.slpa.CacheUnit;
+import trade.spring.data.neo4j.supplychain.slpa.utils.CacheUnit;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
