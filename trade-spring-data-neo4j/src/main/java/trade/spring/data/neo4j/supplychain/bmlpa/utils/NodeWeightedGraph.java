@@ -1,5 +1,9 @@
 package trade.spring.data.neo4j.supplychain.bmlpa.utils;
 
+import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import trade.spring.data.neo4j.supplychain.slpa.utils.IntegerNode;
@@ -10,30 +14,19 @@ import java.util.ArrayList;
 /**
  * Created by Wayne.A.Z on 2019-06-24.
  */
+
+@ApiModel
+@Getter
+@Setter
+@NoArgsConstructor
 public class NodeWeightedGraph {
     SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge> graph;
     ArrayList<WeightedNode> nodeMap;
-
-    public NodeWeightedGraph() {
-        nodeMap = new ArrayList<>();
-    }
 
     public SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge> getGraph() {
         return graph;
     }
 
-    public void setGraph(
-            SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge> graph) {
-        this.graph = graph;
-    }
-
-    public ArrayList<WeightedNode> getNodeMap() {
-        return nodeMap;
-    }
-
-    public void setNodeMap(ArrayList<WeightedNode> nodeMap) {
-        this.nodeMap = nodeMap;
-    }
 
     public void addNodeToMap(int index, WeightedNode node) {
         nodeMap.add(index, node);

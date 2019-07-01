@@ -9,8 +9,16 @@ public class IntegerNode {
 	
 	int id;
 	int community;
-	HashMap<Integer, Integer> communityDistribution; 
-	
+	HashMap<Integer, Integer> communityDistribution;
+
+	public int getId() {
+		return id;
+	}
+
+	public HashMap<Integer, Integer> getCommunityDistribution() {
+		return communityDistribution;
+	}
+
 	public IntegerNode(int id, int community) {
 		this.id = id;
 		this.community = community;
@@ -66,6 +74,5 @@ public class IntegerNode {
 		System.out.println(in.speakerVote());
 		System.out.println(in.speakerVote());
 		System.out.println(in.speakerVote());
-		
 	}
 }
