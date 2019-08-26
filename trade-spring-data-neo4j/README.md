@@ -11,8 +11,9 @@ Trade Application
 
 ## 闰辰当前系统构建和研究进展 
 
-  [参考](http://www.finrunchain.com/html/supply_chain.html)
-  专利[是否]()发表
+  + [参考](http://www.finrunchain.com/html/supply_chain.html)
+  
+  + 专利[是否]()发表
  
 ```
 //TODO：可以考虑走向期货期权实时交易系统，于是数据量和实时性有了要求。于是接近了金融量化。
